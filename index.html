@@ -1,0 +1,2092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CITEC - College of Information, Entertainment, and Communication</title>
+    <style>
+        /* --- 1. Global Variables & Base Styling --- */
+        :root {
+            /* Color Palette (retained) */
+            --color-primary: #222222; 
+            --color-secondary: #ffd700; 
+            --color-text: #333; 
+            --color-background: #f0f0f0; 
+            --color-light-text: #cccccc; 
+            --color-tab-inactive: #e0e0e0;
+            --color-tab-border: #a0a0a0;
+            --color-table-header: #f0f0f0;
+            --color-highlight-bg: #fdfde6; 
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        /* --- NEW: Modal/Pop-up Styles --- */
+        #welcomeModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent backdrop */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200; /* Ensure it's above all other content */
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out; /* Simple animation */
+        }
+
+        .modal-content h2 {
+            border-bottom: 2px solid var(--color-secondary);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: var(--color-primary);
+        }
+
+        #continueButton {
+            background-color: var(--color-secondary);
+            color: var(--color-primary);
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        #continueButton:hover {
+            background-color: #ffc400; /* Slightly darker gold */
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        /* --- END: Modal/Pop-up Styles --- */
+
+
+        /* --- 2. Header & Branding --- */
+        header {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 15px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 60px;
+            width: auto;
+            border-radius: 50%;
+            margin-right: 25px;
+            object-fit: contain;
+            transition: transform 0.3s ease-in-out;
+        }
+        .header-logo:hover {
+            transform: scale(1.05); /* Subtle interaction */
+        }
+        
+        .header-right-logo {
+            height: 60px;
+            width: auto;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .header-text h1 {
+            margin: 0;
+            font-size: 1.8em;
+            color: var(--color-secondary);
+        }
+
+        /* --- 3. Main Content Container --- */
+        .container {
+            width: 95%; 
+            max-width: 1200px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 40px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); 
+            border-radius: 12px;
+        }
+
+        h2 {
+            color: var(--color-primary);
+            font-size: 1.8em;
+            border-bottom: 3px solid var(--color-secondary); 
+            padding-bottom: 12px;
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            color: var(--color-primary);
+            border-left: 5px solid var(--color-secondary);
+            padding-left: 15px;
+            font-size: 1.4em;
+            margin-top: 30px;
+        }
+        
+        /* --- 4. Tabs: Desktop (Horizontal) --- */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--color-tab-border);
+            position: relative;
+        }
+
+        .tabs input[type="radio"] {
+            display: none;
+        }
+
+        .tabs .labels {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .tabs label {
+            padding: 12px 20px;
+            cursor: pointer;
+            background-color: var(--color-tab-inactive);
+            color: var(--color-text);
+            font-weight: 500;
+            border-radius: 8px 8px 0 0;
+            margin-right: 5px;
+            margin-bottom: -2px;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid transparent; 
+        }
+
+        .tabs label:hover {
+            background-color: #d0d0d0;
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            padding: 30px 0;
+            min-height: 400px;
+            /* Animation base */
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        /* Active Tab Styling */
+        #tab1:checked ~ .labels label[for="tab1"],
+        #tab2:checked ~ .labels label[for="tab2"],
+        #tab3:checked ~ .labels label[for="tab3"],
+        #tab4:checked ~ .labels label[for="tab4"] {
+            background-color: white;
+            color: var(--color-primary);
+            border: 1px solid var(--color-tab-border); 
+            border-bottom: 1px solid white;
+            font-weight: 700;
+        }
+
+        /* Show active content and animate in */
+        #tab1:checked ~ .content-tab-1,
+        #tab2:checked ~ .content-tab-2,
+        #tab3:checked ~ .content-tab-3,
+        #tab4:checked ~ .content-tab-4 {
+            display: block;
+            border-top: 2px solid var(--color-secondary);
+            padding-top: 30px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- 5. Table Styling (Desktop) --- */
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 25px 0;
+            font-size: 0.95em;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: var(--color-table-header);
+            color: var(--color-primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--color-secondary);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9; 
+        }
+        
+        tr:hover {
+            background-color: var(--color-highlight-bg); 
+            transition: background-color 0.2s ease-in-out;
+        }
+        
+        /* Centered Columns */
+        th:nth-child(3), th:nth-child(4), th:nth-child(5), th:nth-child(6), th:nth-child(7),
+        td:nth-child(3), td:nth-child(4), td:nth-child(5), td:nth-child(6), td:nth-child(7) {
+            text-align: center;
+        }
+
+        /* Total Row Highlight */
+        table tr:last-child {
+            background-color: var(--color-secondary);
+            color: var(--color-primary);
+            font-weight: bold;
+        }
+        
+        /* Prerequisites List with subtle hover animation */
+        .prereq-list li {
+            background: var(--color-highlight-bg);
+            border-left: 6px solid var(--color-secondary);
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            transition: transform 0.2s;
+        }
+        .prereq-list li:hover {
+            transform: translateX(5px);
+        }
+
+
+        /* --- 6. Mobile Responsiveness Overrides (<= 992px) --- */
+
+        /* For medium to small screens (Tablets vertical down) */
+        @media (max-width: 992px) {
+            .container {
+                padding: 20px;
+                border-radius: 0; /* Remove rounded corners on small screens for full bleed */
+            }
+
+            .tabs .labels {
+                flex-direction: column; /* Stack tabs vertically for mobile navigation */
+            }
+
+            .tabs label {
+                margin-right: 0;
+                margin-bottom: 1px;
+                border-radius: 0;
+                border: 1px solid var(--color-tab-border);
+                border-bottom: none;
+                text-align: center;
+            }
+            .tabs label:last-of-type {
+                border-bottom: 1px solid var(--color-tab-border);
+            }
+            #tab1:checked ~ .labels label[for="tab1"],
+            #tab2:checked ~ .labels label[for="tab2"],
+            #tab3:checked ~ .labels label[for="tab3"],
+            #tab4:checked ~ .labels label[for="tab4"] {
+                border-left: 5px solid var(--color-secondary); /* Highlight active tab with gold border */
+                font-weight: 700;
+                background-color: white;
+            }
+        }
+        
+        /* For small screens (Mobile portrait) */
+        @media (max-width: 576px) {
+            /* Header Stacking */
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 10px;
+            }
+            .header-left {
+                margin-bottom: 10px;
+                width: 100%;
+            }
+            .header-text {
+                width: calc(100% - 75px);
+            }
+            .header-logo {
+                height: 45px;
+                margin-right: 10px;
+            }
+            .header-right-logo {
+                display: none; /* Hide secondary logo to save mobile space */
+            }
+            header h1 {
+                font-size: 1.3em;
+            }
+            header p {
+                font-size: 0.85em;
+            }
+            
+            /* Table Styling for Mobile (Card View) */
+            table, thead, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+            }
+            thead {
+                display: none; /* Hide original headers */
+            }
+            tr { 
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            }
+            td {
+                border: none;
+                border-bottom: 1px solid #eee;
+                position: relative;
+                padding-left: 50%;
+                text-align: right !important;
+            }
+            td:before {
+                /* Use data-label content as the fixed heading */
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                width: 45%;
+                font-weight: 600;
+                text-align: left;
+                color: var(--color-primary);
+            }
+            /* Ensure total row text is visible */
+            table tr:last-child {
+                background-color: var(--color-secondary);
+            }
+            table tr:last-child td {
+                color: var(--color-primary);
+                font-weight: bold;
+                border-bottom: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="welcomeModal">
+        <div class="modal-content">
+            <h2>Welcome to CITEC!</h2>
+            <p>We are the College of Information, Entertainment, and Communication. Explore our academic programs and policies.</p>
+            <button id="continueButton">Continue to Website</button>
+        </div>
+    </div>
+    <header>
+        <div class="header-left">
+            <img src="https://scontent.fmnl30-1.fna.fbcdn.net/v/t39.30808-6/375658702_122107733696027178_8317436764571928107_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEGUoqmFrs7RmwXzsaVgga06xDgXKT_EbjrEOBcpP8RuBMrdtKuSdIfBHaZ2n6U73VkkCElBfGkxvQjWXGSIuw3&_nc_ohc=71wmccyZBkAQ7kNvwGnjTi3&_nc_oc=Adl8cO4GbQS-N8sh1weFM6bxTpz2Zeilnw0AOu1tAsKPN-bVZgFEKUfdwgieR2MYFxI&_nc_zt=23&_nc_ht=scontent.fmnl30-1.fna&_nc_gid=1YlO14DgHdkPkPbLDacrwQ&oh=00_AfhwLzGdycGuHMkHsy__cQv_AJoCoVS0gmF8027rYqBS3g&oe=690E7661" alt="CITEC Logo" class="header-logo"> 
+            <div class="header-text">
+                <h1>CITEC - College of Information, Entertainment, and Communication</h1>
+                <p>Where Technology Meets Creativity</p>
+            </div>
+        </div>
+        
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRH5MSzxPbjqxJ7umURyobQelVoKbsffcpwCQ&s" alt="Second Logo" class="header-right-logo"> 
+    </header>
+
+    <div class="container">
+
+        <div class="tabs">
+            <input type="radio" name="tabs" id="tab1" checked> <input type="radio" name="tabs" id="tab2">
+            <input type="radio" name="tabs" id="tab3"> 
+            <input type="radio" name="tabs" id="tab4">
+
+            <div class="labels">
+                <label for="tab1">About CITEC</label>
+                <label for="tab2">BS Multimedia Arts (BMMA) Subjects</label>
+                <label for="tab3">BS Information Technology (BSIT) Subjects</label>
+                <label for="tab4">Academic Policies</label>
+            </div>
+
+            <div class="tab-content content-tab-1">
+                <h2>Welcome to the College of Information, Entertainment, and Communication</h2>
+                <p>Established in 2019, the College of Information Technology, Entertainment, and Communication (CITEC) is one of the newest additions to UBLC. It originated as a small department offering the Bachelor of Science in Information Technology and played a pivotal role as one of UBLC’s pioneer programs back in 2011. The introduction of the Bachelor in Multimedia Arts program paved the way for the establishment of this thriving college.</p>
+
+                <p>CITEC is committed to nurturing critical thinkers, fostering research-oriented minds, and empowering individuals with creativity and innovation. We aim to shape our students into skilled professionals who can analyze complex organizational challenges, design innovative solutions, and contribute to technological advancements in the fields of information technology, entertainment, and communication.</p>
+
+                <p>At CITEC, we believe in unleashing the full potential of our students through experiential learning. Our dedicated and highly qualified faculty members serve as mentors, inspiring each student to achieve their best. We provide an environment conducive to learning because, at UBLC, **CITEC is where technology meets creativity**.</p>
+
+                <p>Discover boundless opportunities for growth, creativity, and technological excellence at the College of Information Technology, Entertainment, and Communication. Welcome to a dynamic learning experience!.</p>
+                
+                <h3>Academic Programs Offered</h3>
+                <ul>
+                    <li>**Bachelor of Science in Information Technology (BSIT):** Focuses on computer utilization, software development, network administration, and managing IT infrastructure for business solutions.</li>
+                    <li>**Bachelor of Science in Multimedia Arts (BMMA):** Equips students with knowledge and skills in multimedia design, production, and development, covering areas like animation, graphic design, web content, and video production.</li>
+                </ul>
+            </div>
+
+            <div class="tab-content content-tab-2">
+                <h2>Bachelor of Science in Multimedia Arts (BMMA) Curriculum</h2>
+                <h3>Effective AY 2025-2026</h3>
+
+                <div class="program-section">
+                    
+                    <h3>FIRST YEAR</h3>
+                    <h4>First Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">RZL</td>
+                                <td data-label="Course Description">The Life and Works of Rizal</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">ART</td>
+                                <td data-label="Course Description">Art Appreciation</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">ETH</td>
+                                <td data-label="Course Description">Ethics</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">STS</td>
+                                <td data-label="Course Description">Science, Technology and Society</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">GASPE</td>
+                                <td data-label="Course Description">Gender and Society w/ Peace Education</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">PE1</td>
+                                <td data-label="Course Description">Physical Activity Towards Health and Fitness 1 (Movement Enhancement)</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">2</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA111</td>
+                                <td data-label="Course Description">Introduction to Multimedia Arts</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">20</td>
+                                <td data-label="Units Lab Total">0</td>
+                                <td data-label="Hrs Lec Total">20</td>
+                                <td data-label="Hrs Lab Total">0</td>
+                                <td data-label="Total Units">20</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Second Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">PC</td>
+                                <td data-label="Course Description">Purposive Communication</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMW</td>
+                                <td data-label="Course Description">Mathematics in the Modern World</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">RPH</td>
+                                <td data-label="Course Description">Reading in Philippine History</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">UTS</td>
+                                <td data-label="Course Description">Understanding the Self</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">UBCV</td>
+                                <td data-label="Course Description">UB Core Values</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">PE2</td>
+                                <td data-label="Course Description">Physical Activity Towards Health and Fitness 2 (Fitness Exercises)</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">2</td>
+                                <td data-label="Prereq">PE1</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA112</td>
+                                <td data-label="Course Description">Drawing 1</td>
+                                <td data-label="Units Lec">1</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">1</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">2</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA113</td>
+                                <td data-label="Course Description">History of Graphic Design</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">2</td>
+                                <td data-label="Prereq">MMA111</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">20</td>
+                                <td data-label="Units Lab Total">1</td>
+                                <td data-label="Hrs Lec Total">20</td>
+                                <td data-label="Hrs Lab Total">3</td>
+                                <td data-label="Total Units">21</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>SECOND YEAR</h3>
+                    <h4>First Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">PHILPOP</td>
+                                <td data-label="Course Description">Philippine Pop Culture</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">FLANG1</td>
+                                <td data-label="Course Description">Foreign Language 1</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">NSTP1</td>
+                                <td data-label="Course Description">National Service Training Program 1</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">PE3</td>
+                                <td data-label="Course Description">Physical Activity Towards Health and Fitness 3</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">2</td>
+                                <td data-label="Prereq">PE2</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA211</td>
+                                <td data-label="Course Description">Elements and Principles Design</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">MMA113</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA212</td>
+                                <td data-label="Course Description">Drawing 2</td>
+                                <td data-label="Units Lec">1</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">1</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">2</td>
+                                <td data-label="Prereq">MMA112</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA213</td>
+                                <td data-label="Course Description">Color Theory</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">MMA212</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">16</td>
+                                <td data-label="Units Lab Total">3</td>
+                                <td data-label="Hrs Lec Total">16</td>
+                                <td data-label="Hrs Lab Total">9</td>
+                                <td data-label="Total Units">19</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Second Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">TCW</td>
+                                <td data-label="Course Description">The Contemporary World</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">TEM</td>
+                                <td data-label="Course Description">The Entrepreneurial Mind</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">EPR</td>
+                                <td data-label="Course Description">English Proficiency for the Empowered Professionals</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">NSTP2</td>
+                                <td data-label="Course Description">National Service Training Program 2</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">NSTP1</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">PE4</td>
+                                <td data-label="Course Description">Physical Activity Towards Health and Fitness 4</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">2</td>
+                                <td data-label="Prereq">PE3</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA214</td>
+                                <td data-label="Course Description">Writing for New Media</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMAFreeElec I</td>
+                                <td data-label="Course Description">Copywriting</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">23</td>
+                                <td data-label="Units Lab Total">0</td>
+                                <td data-label="Hrs Lec Total">23</td>
+                                <td data-label="Hrs Lab Total">0</td>
+                                <td data-label="Total Units">23</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>THIRD YEAR</h3>
+                    <h4>First Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">MMA311</td>
+                                <td data-label="Course Description">Digital Photography</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA312</td>
+                                <td data-label="Course Description">Multimedia Publishing</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">MMA212</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA313</td>
+                                <td data-label="Course Description">Typography and Layout</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA314</td>
+                                <td data-label="Course Description">Business Ventures in Multimedia</td>
+                                <td data-label="Units Lec">1</td>
+                                <td data-label="Units Lab">2</td>
+                                <td data-label="Hrs Lec">1</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">MMA212</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMARes</td>
+                                <td data-label="Course Description">Methods of Research</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                                <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">12</td>
+                                <td data-label="Units Lab Total">3</td>
+                                <td data-label="Hrs Lec Total">12</td>
+                                <td data-label="Hrs Lab Total">9</td>
+                                <td data-label="Total Units">15</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Second Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">MMA315</td>
+                                <td data-label="Course Description">3D Animation</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">MMA212</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA316</td>
+                                <td data-label="Course Description">Interactive Media Design</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">MMA211</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA317</td>
+                                <td data-label="Course Description">Digital Sound Production</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA318</td>
+                                <td data-label="Course Description">Portfolio Preparation and Exhibit</td>
+                                <td data-label="Units Lec">1</td>
+                                <td data-label="Units Lab">2</td>
+                                <td data-label="Hrs Lec">1</td>
+                                <td data-label="Hrs Lab">6</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMAElec 1</td>
+                                <td data-label="Course Description">Digital Storyboarding</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">9</td>
+                                <td data-label="Units Lab Total">6</td>
+                                <td data-label="Hrs Lec Total">9</td>
+                                <td data-label="Hrs Lab Total">18</td>
+                                <td data-label="Total Units">15</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4>Summer</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">MMAElec II</td>
+                                <td data-label="Course Description">Web Programming</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMARFree Elec II</td>
+                                <td data-label="Course Description">New Media Culture</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label-="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">THESIS1</td>
+                                <td data-label="Course Description">Thesis/Capstone Project 1</td>
+                                <td data-label="Units Lec">0</td>
+                                <td data-label="Units Lab">3</td>
+                                <td data-label="Hrs Lec">0</td>
+                                <td data-label="Hrs Lab">9</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">5</td>
+                                <td data-label="Units Lab Total">4</td>
+                                <td data-label="Hrs Lec Total">5</td>
+                                <td data-label="Hrs Lab Total">12</td>
+                                <td data-label="Total Units">9</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>FOURTH YEAR</h3>
+                    <h4>First Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">MMA411</td>
+                                <td data-label="Course Description">Fundamentals in Film and Video Production</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMA412</td>
+                                <td data-label="Course Description">Multimedia Seminars</td>
+                                <td data-label="Units Lec">1</td>
+                                <td data-label="Units Lab">2</td>
+                                <td data-label="Hrs Lec">1</td>
+                                <td data-label="Hrs Lab">6</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMAElec III</td>
+                                <td data-label="Course Description">Brand Communications and Design</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMAFreeElec III</td>
+                                <td data-label="Course Description">Illustration and Cartooning</td>
+                                <td data-label="Units Lec">1</td>
+                                <td data-label="Units Lab">2</td>
+                                <td data-label="Hrs Lec">1</td>
+                                <td data-label="Hrs Lab">6</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">THESIS2</td>
+                                <td data-label="Course Description">Thesis/Capstone Project 2</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">THESIS1</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">9</td>
+                                <td data-label="Units Lab Total">6</td>
+                                <td data-label="Hrs Lec Total">9</td>
+                                <td data-label="Hrs Lab Total">18</td>
+                                <td data-label="Total Units">15</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Second Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">PRACT</td>
+                                <td data-label="Course Description">Internship (296 hrs)</td>
+                                <td data-label="Units Lec">0</td>
+                                <td data-label="Units Lab">3</td>
+                                <td data-label="Hrs Lec">0</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">0</td>
+                                <td data-label="Units Lab Total">3</td>
+                                <td data-label="Hrs Lec Total">0</td>
+                                <td data-label="Hrs Lab Total">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="program-section">
+                    <h3>Module Prerequisites (Selected Examples)</h3>
+                    <ul class="prereq-list">
+                        <li>**3D Animation (MMA317):** Prerequisite: MMA214 (Writing for New Media)</li>
+                        <li>**Intermediate Computer Graphics (MMA312):** Prerequisite: MMA212 (Drawing 2)</li>
+                        <li>**Typography and Layout (MMA314):** Corequisite: MMA212 (Drawing 2)</li>
+                        <li>**Interactive Media Design (MMA318):** Prerequisite: MMA311 (Digital Photography)</li>
+                        <li>**Thesis/Capstone Project 2 (THESIS2):** Prerequisite: THESIS1 (Thesis/Capstone Project 1)</li>
+                        <li>**Internship (PRACT):** Prerequisite: 4th yr Standing</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tab-content content-tab-3">
+                <h2>Bachelor of Science in Information Technology (BSIT) Curriculum</h2>
+                <h3>Effective AY 2025-2026</h3>
+
+                <div class="program-section">
+                    
+                    <h3>FIRST YEAR</h3>
+
+                    <h4>First Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">CC101T</td>
+                                <td data-label="Course Description">Introduction to Computing</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">CC102T</td>
+                                <td data-label="Course Description">Computer Programming 1</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">RIZAL</td>
+                                <td data-label="Course Description">The Life and Works of Rizal</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">ART</td>
+                                <td data-label="Course Description">Art Appreciation</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">ETH</td>
+                                <td data-label="Course Description">Ethics</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">STS</td>
+                                <td data-label="Course Description">Science, Technology and Society (with civic skills)</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">GASPE</td>
+                                <td data-label="Course Description">Gender and Society w/ Peace Education</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">PE1</td>
+                                <td data-label="Course Description">Physical Activity Towards Health and Fitness 1</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">2</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">21</td>
+                                <td data-label="Units Lab Total">2</td>
+                                <td data-label="Hrs Lec Total">21</td>
+                                <td data-label="Hrs Lab Total">6</td>
+                                <td data-label="Total Units">23</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Second Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">CC103T</td>
+                                <td data-label="Course Description">Computer Programming 2</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">CC102T</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MS101</td>
+                                <td data-label="Course Description">Discrete Mathematics</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">PC</td>
+                                <td data-label="Course Description">Purposive Communication</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MMW</td>
+                                <td data-label="Course Description">Mathematics in the Modern World</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">US</td>
+                                <td data-label="Course Description">Understanding the Self</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">RPH</td>
+                                <td data-label="Course Description">Readings in Philippine History</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">UBCV</td>
+                                <td data-label="Course Description">UB Core Values</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">PE2</td>
+                                <td data-label="Course Description">Physical Activity Towards Health and Fitness 2</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">2</td>
+                                <td data-label="Prereq">PE1</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">22</td>
+                                <td data-label="Units Lab Total">1</td>
+                                <td data-label="Hrs Lec Total">22</td>
+                                <td data-label="Hrs Lab Total">3</td>
+                                <td data-label="Total Units">23</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>SECOND YEAR</h3>
+
+                    <h4>First Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">CC104T</td>
+                                <td data-label="Course Description">Data Structures and Algorithms</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">CC102T</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">PF101</td>
+                                <td data-label="Course Description">Object-Oriented Programming</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">CC103T</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">PT101</td>
+                                <td data-label="Course Description">Platform Technologies</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">FLANG 1</td>
+                                <td data-label="Course Description">Foreign Language 1</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">NSTP1</td>
+                                <td data-label="Course Description">National Service Training Program 1</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">PE3</td>
+                                <td data-label="Course Description">Physical Activity Towards Health and Fitness 3</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">2</td>
+                                <td data-label="Prereq">PE2</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">PHILPOP</td>
+                                <td data-label="Course Description">Philippine Pop Culture</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">17</td>
+                                <td data-label="Units Lab Total">3</td>
+                                <td data-label="Hrs Lec Total">17</td>
+                                <td data-label="Hrs Lab Total">9</td>
+                                <td data-label="Total Units">20</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Second Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">CC105T</td>
+                                <td data-label="Course Description">Information Management</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">CC103T</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">NET101</td>
+                                <td data-label="Course Description">Networking 1</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">MS102</td>
+                                <td data-label="Course Description">Quantitative Methods (Incl Modeling and Simulation)</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">TCW</td>
+                                <td data-label="Course Description">The Contemporary World</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">TEM</td>
+                                <td data-label="Course Description">The Entrepreneurial Mind</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">NSTP2</td>
+                                <td data-label="Course Description">National Training Service Porgram 2</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">NSTP1</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">PE4</td>
+                                <td data-label="Course Description">Physical Activity Towards Health and Fitness 4</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">2</td>
+                                <td data-label="Prereq">PE3</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">EPR</td>
+                                <td data-label="Course Description">English Proficiency for the Empowered Professionals</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">21</td>
+                                <td data-label="Units Lab Total">2</td>
+                                <td data-label="Hrs Lec Total">21</td>
+                                <td data-label="Hrs Lab Total">6</td>
+                                <td data-label="Total Units">23</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>THIRD YEAR</h3>
+
+                    <h4>First Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">HCI101</td>
+                                <td data-label="Course Description">Introduction to Human Computer Interaction</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">CC106T</td>
+                                <td data-label="Course Description">Applications Development and Emerging Technologies</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">PF101</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">NET102</td>
+                                <td data-label="Course Description">Networking 2</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">NET101</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">IAS101</td>
+                                <td data-label="Course Description">Information Assurance and Security 1 (Fundamentals of IAS)</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">SIA101</td>
+                                <td data-label="Course Description">System Integration and Architecture 1 (Fundamentals of SIA)</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">ITELEC1</td>
+                                <td data-label="Course Description">Elective 1</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">12</td>
+                                <td data-label="Units Lab Total">6</td>
+                                <td data-label="Hrs Lec Total">12</td>
+                                <td data-label="Hrs Lab Total">18</td>
+                                <td data-label="Total Units">18</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Second Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+<tr>
+                                <td data-label="Course Code">SP101</td>
+                                <td data-label="Course Description">Social Professional Issues</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="3rd Year Standing"></td>
+                            </tr>
+
+                            <tr>
+                                <td data-label="Course Code">IAS102</td>
+                                <td data-label="Course Description">Information Assurance and Security 2 ( Advanced Topics of IAS)</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">IAS101</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">SA101</td>
+                                <td data-label="Course Description">System Administration and Maintenance</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">IM101</td>
+                                <td data-label="Course Description">Fundamentals of Database System</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">CC105T</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">IPT101</td>
+                                <td data-label="Course Description">Integrative Programming and Technologies 1</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">FREE ELEC I</td>
+                                <td data-label="Course Description">Free Elective 1</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">3rd yr Standing</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">12</td>
+                                <td data-label="Units Lab Total">6</td>
+                                <td data-label="Hrs Lec Total">12</td>
+                                <td data-label="Hrs Lab Total">18</td>
+                                <td data-label="Total Units">18</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4>SUMMER</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">WS101</td>
+                                <td data-label="Course Description">Web System and Technologies</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">HC101</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">CAP101</td>
+                                <td data-label="Course Description">Capstone Project and Research 1</td>
+                                <td data-label="Units Lec">0</td>
+                                <td data-label="Units Lab">3</td>
+                                <td data-label="Hrs Lec">0</td>
+                                <td data-label="Hrs Lab">9</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">ITELEC II</td>
+                                <td data-label="Course Description">Elective 2</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">4</td>
+                                <td data-label="Units Lab Total">5</td>
+                                <td data-label="Hrs Lec Total">4</td>
+                                <td data-label="Hrs Lab Total">15</td>
+                                <td data-label="Total Units">9</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>FOURTH YEAR</h3>
+
+                    <h4>First Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">IPT102</td>
+                                <td data-label="Course Description">Integrative Programming and Technologies 2</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">SIA 101</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">CAP102</td>
+                                <td data-label="Course Description">Capstone Project and Research 2</td>
+                                <td data-label="Units Lec">0</td>
+                                <td data-label="Units Lab">3</td>
+                                <td data-label="Hrs Lec">0</td>
+                                <td data-label="Hrs Lab">9</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">CAP101</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">ITELEC III</td>
+                                <td data-label="Course Description">Elective 3</td>
+                                <td data-label="Units Lec">3</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">3</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">ITFREE ELEC II</td>
+                                <td data-label="Course Description">Free Elective 2</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">1</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">3</td>
+                                <td data-label="Total Units">3</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Course Code">ITFREE ELEC III</td>
+                                <td data-label="Course Description">Free Elective 3</td>
+                                <td data-label="Units Lec">2</td>
+                                <td data-label="Units Lab">0</td>
+                                <td data-label="Hrs Lec">2</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">2</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">9</td>
+                                <td data-label="Units Lab Total">5</td>
+                                <td data-label="Hrs Lec Total">9</td>
+                                <td data-label="Hrs Lab Total">15</td>
+                                <td data-label="Total Units">14</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Second Semester</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Description</th>
+                                <th class="center-col">Units<br>Lec</th>
+                                <th class="center-col">Units<br>Lab</th>
+                                <th class="center-col">Hours/Week<br>Lec</th>
+                                <th class="center-col">Hours/Week<br>Lab</th>
+                                <th class="center-col">Total<br>Units</th>
+                                <th>Prerequisite/<br>Corequisite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Course Code">PRAC101</td>
+                                <td data-label="Course Description">Practicum (486 hrs Internship)</td>
+                                <td data-label="Units Lec">0</td>
+                                <td data-label="Units Lab">6</td>
+                                <td data-label="Hrs Lec">0</td>
+                                <td data-label="Hrs Lab">0</td>
+                                <td data-label="Total Units">6</td>
+                                <td data-label="Prereq">4th yr Standing</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2" data-label="Summary">TOTAL</td>
+                                <td data-label="Units Lec Total">0</td>
+                                <td data-label="Units Lab Total">6</td>
+                                <td data-label="Hrs Lec Total">0</td>
+                                <td data-label="Hrs Lab Total">0</td>
+                                <td data-label="Total Units">6</td>
+                                <td data-label="Prereq"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="electives-list">
+                        <h4>Electives (9 units):</h4>
+                        <ul class="clean-list">
+                            <li>Digital Marketing w/SAP</li>
+                            <li>Game Development</li>
+                            <li>Fundamentals of Data Analytics</li>
+                            <li>Event-driven Programming</li>
+                            <li>Graphics Animation</li>
+                        </ul>
+                        
+                        <h4>Free Electives (9 units):</h4>
+                        <ul class="clean-list">
+                            <li>Mobile Communication for IT</li>
+                            <li>Fieldtrips & Seminar</li>
+                            <li>Introduction to Cybersecurity</li>
+                            <li>Technopreneurship</li>
+                            <li>Multimedia Publishing</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="program-section">
+                    <h3>Module Prerequisites (Selected IT Examples)</h3>
+                    <ul class="prereq-list">
+                        <li>**Intermediate Programming (CC103T):** Prerequisite: CC102T (Programming Fundamentals)</li>
+                        <li>**Data Structures and Algorithms (CC104T):** Prerequisite: CC102T (Programming Fundamentals)</li>
+                        <li>**Object-Oriented Programming (PF101):** Prerequisite: CC103T (Intermediate Programming)</li>
+                        <li>**Information Management (CC105T):** Prerequisite: CC103T (Intermediate Programming)</li>
+                        <li>**Networking 2 (NET102):** Prerequisite: NET101 (Networking 1)</li>
+                        <li>**Information Assurance and Security 2 (IAS102):** Prerequisite: IAS101</li>
+                        <li>**Fundamentals of Database System (IM101):** Prerequisite: CC105T</li>
+                        <li>**Web System and Technologies (WS101):** Corequisite: HC 101</li>
+                        <li>**Capstone Project and Research 2 (CAP102):** Prerequisite: CAP101</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="tab-content content-tab-4">
+                <h2>CITEC Academic and Project Requirements</h2>
+
+                <div class="policies-section">
+                    <h3>Capstone Project Requirements</h3>
+                    <p>The **Capstone Project or Thesis** is a mandatory final-year requirement for both the BSIT and BMMA programs, designed to synthesize all acquired knowledge and skills.</p>
+                    <ul>
+                        <li>**Phase 1: Proposal and Feasibility Study** (Completed in Capstone 1 course) - Submission of project title, statement of the problem, literature review, and detailed project methodology.</li>
+                        <li>**Phase 2: Development and Documentation** (Completed in Capstone 2 course) - Implementation of the working system (BSIT) or final creative product (BMMA), followed by the creation of a comprehensive technical/research paper.</li>
+                        <li>**Phase 3: Final Oral Defense** - Formal presentation and defense of the project before a panel of experts and faculty.</li>
+                        <li>**Final Output:** Must be a viable solution (BSIT) or a high-quality creative work (BMMA) that addresses a real-world need.</li>
+                    </ul>
+                </div>
+
+                <div class="policies-section">
+                    <h3>Minimum Marks Needed for Continuation</h3>
+                    <p>To ensure academic excellence and timely graduation, students must adhere to the following minimum standards (Note: Specific grades vary per semester and college policy; these are general university guidelines):</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Requirement</th>
+                                <th>Minimum Mark</th>
+                                <th>Policy Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Requirement">**Minimum Passing Mark (Per Subject)**</td>
+                                <td data-label="Minimum Mark">**75%** (or Grade Point Equivalent of **3.0** or **P** for Pass)</td>
+                                <td data-label="Policy Detail">Any grade below this (e.g., 5.0 or 69%) is considered a failure and requires re-enrollment.</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Requirement">**General Weighted Average (GWA)**</td>
+                                <td data-label="Minimum Mark">Minimum **2.75** (or specified GWA equivalent)</td>
+                                <td data-label="Policy Detail">Students must maintain the retention GWA per semester/year. Failure to do so may result in academic probation.</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Requirement">**Major Subject Minimum**</td>
+                                <td data-label="Minimum Mark">Minimum **2.0** (or higher, e.g., 85%)</td>
+                                <td data-label="Policy Detail">For core professional subjects, a higher minimum may be enforced to proceed to more advanced, prerequisite-dependent courses.</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Requirement">**Maximum Failed Units**</td>
+                                <td data-label="Minimum Mark">Not more than **9 Units** of failure per academic year.</td>
+                                <td data-label="Policy Detail">Exceeding the maximum allowed failed units can lead to academic disqualification or mandatory course shifting.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> 
+    </div> 
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const modal = document.getElementById('welcomeModal');
+            const button = document.getElementById('continueButton');
+
+            // Function to hide the modal when the button is clicked
+            button.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+            
+            // Optionally, hide the modal if the user presses the Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.style.display !== 'none') {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    
+    <script>
+        window.__ow = window.__ow || {};
+        window.__ow.organizationId = "5b870940-c22d-42b8-8416-92d7b49b719c";
+        window.__ow.template_id = "f017c965-f134-4142-9637-02dad370abb1";
+        window.__ow.integration_name = "manual_settings";
+        window.__ow.product_name = "chatbot";    
+        ;(function(n,t,c){function i(n){return e._h?e._h.apply(null,n):e._q.push(n)}var e={_q:[],_h:null,_v:"2.0",on:function(){i(["on",c.call(arguments)])},once:function(){i(["once",c.call(arguments)])},off:function(){i(["off",c.call(arguments)])},get:function(){if(!e._h)throw new Error("[OpenWidget] You can't use getters before load.");return i(["get",c.call(arguments)])},call:function(){i(["call",c.call(arguments)])},init:function(){var n=t.createElement("script");n.async=!0,n.type="text/javascript",n.src="https://cdn.openwidget.com/openwidget.js",t.head.appendChild(n)}};!n.__ow.asyncInit&&e.init(),n.OpenWidget=n.OpenWidget||e}(window,document,[].slice))
+    </script>
+    <noscript>You need to <a href="https://www.chatbot.com/help/chat-widget/enable-javascript-in-your-browser/" rel="noopener nofollow">enable JavaScript</a> in order to use the AI chatbot tool powered by <a href="https://www.chatbot.com/" rel="noopener nofollow" target="_blank">ChatBot</a></noscript>
+</body>
+</html>
